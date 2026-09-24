@@ -24,11 +24,19 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # Этот шаг заменяет собой и сборку, и отправку (push)
-      # Он сам переведет 'Maggich/Docker-registry' в 'maggich/docker-registry'
+      # ШАГ 1: Создаем переменную в нижнем регистре
+      - name: Lowercase Repository Name
+        id: string
+        run: |
+          # Берем имя 'ghcr.io/Maggich/Docker-registry' и переводим в 'ghcr.io/maggich/docker-registry'
+          IMAGE_TAG="ghcr.io/${{ github.repository }}"
+          echo "IMAGE_NAME=$(echo "$IMAGE_TAG" | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+
+      # ШАГ 2: Используем готовую переменную окружения (IMAGE_NAME)
       - name: Build and Push to GHCR
         uses: docker/build-push-action@v5
         with:
           context: .
           push: true
-          tags: ghcr.io/${{ github.repository }}:latest
+          # Берем полученную из предыдущего шага lowercase строку и добавляем к ней :latest
+          tags: ${{ env.IMAGE_NAME }}:latest
