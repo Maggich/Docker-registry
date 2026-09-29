@@ -40,3 +40,7 @@ jobs:
           push: true
           # Берем полученную из предыдущего шага lowercase строку и добавляем к ней :latest
           tags: ${{ env.IMAGE_NAME }}:latest
+
+
+
+          
